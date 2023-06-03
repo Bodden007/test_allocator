@@ -58,7 +58,8 @@ int main()
 	}
 }
 
-//определение функции factorial
+//определение функции factorial 
+// Надо ли здесь добовлять выделение памяти???
 template<typename Allocator>
 void factorial(std::map<int, int, std::less<int>, Allocator>& factor)
 {
