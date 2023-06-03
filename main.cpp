@@ -3,12 +3,6 @@
 #include <memory>
 #include <memory_resource>
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-
-
 // Создание аллокатора
 template <typename T>
 struct MyAllocator {
