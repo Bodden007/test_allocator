@@ -39,7 +39,6 @@ struct MyAllocator {
 template <typename Allocator>
 void factorial(std::map <int, int, std::less<int>, Allocator >& factor);
 
-
 int main()
 {	
 	std::map <int, int, std::less<int>, MyAllocator<std::pair <const int, int>> > factor_alloc;
