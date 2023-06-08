@@ -4,18 +4,14 @@
 #include <memory_resource>
 
 // Создание аллокатора
-template<typename T, size_t pre_size >
+template<typename T, std::size_t pre_size >
 struct MyAllocator
 {
 	using value_type = T;
 
 	T* m_memory{nullptr};
 	
-	/*size_t pre_size = 10;*/
 	size_t m_position{ 0 };
-
-	//template <typename U, size_t pre_size>
-	//MyAllocator(const MyAllocator<U>&, size_t pre_size) {}
 
 	MyAllocator()
 	{
@@ -34,8 +30,9 @@ struct MyAllocator
 		return result;
 	}
 
-	void deallocate(T* p, std::size_t) {
-		operator delete(p);
+	~ MyAllocator(T* p, std::size_t) 
+	{
+		::operator delete(p);
 	}
 };
 
