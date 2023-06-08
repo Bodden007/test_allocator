@@ -3,24 +3,30 @@
 #include <memory>
 #include <memory_resource>
 
-//// Создание аллокатора
-template<typename T, size_t pre_size>
+// Создание аллокатора
+template<typename T>
 struct MyAllocator
 {
+	using value_type = T;
+
 	T* m_memory;
 	
+	size_t pre_size = 10;
 	size_t m_position{ 0 };
+
+	template <typename U>
+	MyAllocator(const MyAllocator<U>&) {}
 
 	MyAllocator()
 	{
-		m_memory = ::operator new(pre_size);
+		m_memory = ::operator new[](pre_size);
 	}
 
-	T* allocate(const size_t n)
+	T* allocate(size_t n)
 	{
 		if (m_position + n > pre_size)
 		{
-			throw std::bad_alloc{"no more memory!"};
+			throw std::bad_alloc();
 		}
 
 		const auto result = m_memory + m_position;
@@ -28,18 +34,22 @@ struct MyAllocator
 		return result;
 	}
 
+	void deallocate(T* p, std::size_t) {
+		operator delete(p);
+	}
 };
+
 
 template<typename Allocator>
 void factorial(std::map<int, int, std::less<int>, Allocator> & factor);
 
 int main()
 {	
-	std::map<int, int, std::less<int>, MyAllocator<std::pair<const int, int>, 10>> myMap;
+	std::map<int, int, std::less<int>, MyAllocator<std::pair<const int, int>>> myMap;
 
-	std::map<int, int> myMap;
+	/*std::map<int, int> myMap;*/
 
-	/*factorial(myMap);*/
+	factorial(myMap);
 
 	for (const auto f : myMap)
 	{
