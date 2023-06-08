@@ -11,7 +11,7 @@ struct MyAllocator
 	
 	T* m_memory;
 
-	const size_t pre_size = 100;
+	const size_t pre_size = 10;
 	
 	size_t m_position{ 0 };
 
@@ -34,12 +34,12 @@ struct MyAllocator
 		const auto result = m_memory + m_position;
 		m_position += n;
 		return result;
-		/*return static_cast<T*>(::operator new(pre_size * sizeof(T)));*/
+		///*return static_cast<T*>(::operator new(pre_size * sizeof(T)));*/
 	}
 
 	~MyAllocator() 
 	{
-		::operator delete(m_memory);
+		/*::operator delete(m_memory);*/
 	}
 
 	void deallocate(T* p, std::size_t) {
@@ -54,9 +54,6 @@ void factorial(std::map<int, int, std::less<int>, Allocator> & factor);
 int main()
 {	
 	std::map<int, int, std::less<int>, MyAllocator<std::pair<const int, int>>> myMap;
-
-
-	/*std::map<int, int> myMap;*/
 
 	factorial(myMap);
 
