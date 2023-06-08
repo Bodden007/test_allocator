@@ -8,11 +8,15 @@ template<typename T >
 struct MyAllocator
 {
 	using value_type = T;
+	
+	T* m_memory;
 
-	T* m_memory{nullptr};
-	const size_t pre_size = 10;
+	const size_t pre_size = 100;
 	
 	size_t m_position{ 0 };
+
+	template <typename U>
+	MyAllocator(const MyAllocator<U>&) {}
 
 	MyAllocator()
 	{
@@ -20,7 +24,7 @@ struct MyAllocator
 		m_memory = static_cast<T*>(::operator new(pre_size * sizeof(T)));
 	}
 
-	T* allocate(size_t n)
+	T* allocate(std::size_t n)
 	{
 		if (m_position + n > pre_size)
 		{
@@ -30,11 +34,16 @@ struct MyAllocator
 		const auto result = m_memory + m_position;
 		m_position += n;
 		return result;
+		/*return static_cast<T*>(::operator new(pre_size * sizeof(T)));*/
 	}
 
 	~MyAllocator() 
 	{
 		::operator delete(m_memory);
+	}
+
+	void deallocate(T* p, std::size_t) {
+		operator delete(p);
 	}
 };
 
@@ -45,6 +54,7 @@ void factorial(std::map<int, int, std::less<int>, Allocator> & factor);
 int main()
 {	
 	std::map<int, int, std::less<int>, MyAllocator<std::pair<const int, int>>> myMap;
+
 
 	/*std::map<int, int> myMap;*/
 
