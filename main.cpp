@@ -4,47 +4,40 @@
 #include <memory_resource>
 
 // Создание аллокатора
-template<typename T >
-struct MyAllocator
-{
+template <typename T>
+struct MyAllocator {
 	using value_type = T;
-	
-	T* m_memory;
-
 	const size_t pre_size = 10;
+
+	MyAllocator()
+	{
+		m_memory = static_cast<T*>(::operator new(pre_size * sizeof(T)));
+	}
 	
-	size_t m_position{ 0 };
+	~MyAllocator() {};
 
 	template <typename U>
 	MyAllocator(const MyAllocator<U>&) {}
 
-	MyAllocator()
-	{
+	T* allocate(std::size_t n) {
 		
-		m_memory = static_cast<T*>(::operator new(pre_size * sizeof(T)));
-	}
-
-	T* allocate(std::size_t n)
-	{
-		if (m_position + n > pre_size)
+		if (m_position+n > pre_size)
 		{
 			throw std::bad_alloc();
 		}
-
+			
 		const auto result = m_memory + m_position;
 		m_position += n;
 		return result;
-		///*return static_cast<T*>(::operator new(pre_size * sizeof(T)));*/
-	}
-
-	~MyAllocator() 
-	{
-		/*::operator delete(m_memory);*/
 	}
 
 	void deallocate(T* p, std::size_t) {
 		operator delete(p);
 	}
+
+private:
+	T* m_memory;
+	size_t m_position{ 0 };
 };
 
 
@@ -67,7 +60,7 @@ int main()
 template<typename Allocator>
 void factorial(std::map<int, int, std::less<int>, Allocator>& factor)
 {
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 8; i++)
 	{
 		factor[i] = 1;
 
