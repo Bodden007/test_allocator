@@ -24,10 +24,14 @@ struct MyAllocator {
 
 	T* allocate(const size_t n) {
 		
-		if (n > 10)
+		if (m_position + n > pre_size)
+		{
 			throw std::bad_alloc();
+		}
 
-		return static_cast<T*>(::operator new(pre_size * sizeof(T)));
+		const auto result = m_memory + m_position;
+		m_position += n;
+		return result;
 		
 	}
 
@@ -36,8 +40,8 @@ struct MyAllocator {
 	}
 
 private:
-	T* m_memory{nullptr};
-
+	T* m_memory{ nullptr };
+	std::size_t m_position{0};
 };
 
 template<typename Allocator>
